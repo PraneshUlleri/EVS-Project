@@ -4,20 +4,17 @@ var GoogleSpreadsheet = require('google-spreadsheet');
 const async = require('async');
 const {promisify}= require('util');
 const creds = require('./client_secret.json');
-var rwvalue=0
+
 var input1,input2,input31,input3,input4,input5,input6,input7,input8,input9;
 var tname, tid,ttime, input10;
-var chat_id;
 var a=[];
-
 async function accessSpreadsheet(){
 const doc = new GoogleSpreadsheet('1bL83tJd2r99SbgUkFuoXJIsk45BlMgUFU9-r8Ng0ddY');
 await promisify (doc.useServiceAccountAuth)(creds);
 const info= await promisify(doc.getInfo)();
 const sheet = info.worksheets[0];
 console.log(`Title:${sheet.title},rows:${sheet.rowCount}`)
-
-const row={username :tid,
+const row={userid :tid,
     name: tname,
     q1 : input1,
     q2 : input2,
@@ -33,50 +30,10 @@ const row={username :tid,
     time : ttime
 
 }
+
 await promisify(sheet.addRow)(row);
-}
-/*
-const cells = await promisify(sheet.getCells)({
-'min-row':2,
-'max-row':11,
-'min-col':20,
-'max-col':20
-})
-var i=1;
-
-for (const cell of cells){console.log("***")
-a[i]=cell.value
-
-console.log(a[i]+'%')
-i=i+1;
-}
-*/
-async function getreport(){
-const doc = new GoogleSpreadsheet('1bL83tJd2r99SbgUkFuoXJIsk45BlMgUFU9-r8Ng0ddY');
-await promisify (doc.useServiceAccountAuth)(creds);
-const info= await promisify(doc.getInfo)();
-const sheet = info.worksheets[0];
-console.log(`Title:${sheet.title},rows:${sheet.rowCount}`)
-
-const cells = await promisify(sheet.getCells)({
-'min-row':2,
-'max-row':11,
-'min-col':20,
-'max-col':20,
-
-})
-console.log('out')
-var i=1;
-for(const cell of cells){
-	console.log("***")
-	a[i]=cell.value
-	console.log(a[i]+'%')
-	i=i+1;
-}
 
 }
-getreport();
-
 
 
 //AIzaSyA0CX-ea5O7XlGpRIWaeZNwHtdqUTKzAvI   google api places
@@ -95,8 +52,8 @@ api.on('message', function(message)
     tname =message.chat.first_name+" "+message.chat.last_name;
     ttime= message.date;
     tid=message.chat.username;
-   chat_id = message.chat.id;
-    if (message.text=="hi"||message.text=="Hi"){
+    var chat_id = message.chat.id;
+    if (message.text=="hi"){
       
     var inlineKeyboard = {
         inline_keyboard: [
@@ -106,7 +63,7 @@ api.on('message', function(message)
                     callback_data: '0-1'
                 },
                 {
-                    text: 'analysis part',
+                    text: 'lets see the analysis',
                     callback_data: '0-2'
                 }
         ]]
@@ -122,60 +79,7 @@ api.on('inline.callback.query', function(msg) {
 	 var data = msg.data;
 	// massage.text=null;
 if (data=="0-1"){
-  question1();
-}
-if (data=="0-2"){//for excel values 
-	printanaldata();
-
-}	
-
-})
-
-function printanaldata(msg){
-api.sendMessage({
-        chat_id:message.chat.id,
-        text: 'Do you have livestocks?\n yes :'+a[1]+'%',
-    })
-api.sendMessage({
-        chat_id:message.chat.id,
-        text: 'Q3:  Do you have biogas plant at your home?\n yes :'+a[2]+'%',
-    })
-api.sendMessage({
-        chat_id:message.chat.id,
-        text: 'Would you like to get a biogas connection(if you dont have)\n yes :'+a[3]+'%',
-    })
-api.sendMessage({
-        chat_id:message.chat.id,
-        text: ' Do you handle waste by using proper methods?\n yes :'+a[4]+'%',
-    })
-api.sendMessage({
-        chat_id:message.chat.id,
-        text: 'Do you dispose the biodegradable waste in pit made in your backyard?\n yes :'+a[5]+'%',
-    })
-api.sendMessage({
-        chat_id:message.chat.id,
-        text: 'Have you tried turning waste into manure and fertiliser?\n yes :'+a[6]+'%',
-    })
-api.sendMessage({
-        chat_id:message.chat.id,
-        text: 'Do you sort waste into three\n yes :'+a[7]+'%',
-    })
-    api.sendMessage({
-        chat_id:message.chat.id,
-        text: 'Do you burn plastic waste\n yes :'+a[8]+'%',
-    })
-      api.sendMessage({
-        chat_id:message.chat.id,
-        text: 'Do you give up the plastic waste for recycling after collecting?\n yes :'+a[9]+'%',
-    })
-        api.sendMessage({
-        chat_id:message.chat.id,
-        text: ' Did you know you could extract gold from eWaste?\n yes :'+a[10]+'%',
-    })
-}
-
-function question1(msg){
-api.sendMessage({
+  api.sendMessage({
         chat_id:message.chat.id,
         text: 'Thank you for choosing Sustainable Future !\nBut before we can give you the solution could you complete the surevey',   
     })
@@ -213,10 +117,11 @@ question2(msg)}
 
 
 })
-
 }
-
-
+if (data=="0-2"){//for excel values 
+}	
+analysisfact    ();
+})
 
 }
 function question2(msg){
@@ -553,22 +458,12 @@ api.on('inline.callback.query', function(msg) {
 
     var data = msg.data;
 if (data== "10-1"){ input10='yes' 
-
-accessSpreadsheet(); 
-}
-    if (data=="10-2"){ input10='no'
-    
 accessSpreadsheet(); }
-analysis_partt();
+    if (data=="10-2"){ input10='no'
+accessSpreadsheet(); }
+
 
 })
-}
-
-function analysis_partt(){
-api.sendMessage({
-        chat_id:message.chat.id,
-        text: 'Thanks for completing the survey :) \n\nHere are some tips to help you handle your waste\n\n Part1:Reducing Your Garbage\n1.Use cloth bags instead of plastic \n2.Buy food that has less packaging\n3.Do vermicomposting\n4.Don\'t use bottled drinks unless you have to.\n5.Reduce your paper usage.\n6.Consider making your own household cleaners and detergents\n\n Part2: Reusing and Recycling\n1.Donate items when possible\n2.Reuse containers\n3.Follow your city\'s recycling policies\n4.Dispose of trash and hazardous waste properly\n\nPart3:Composting\n1.Save your food scraps and yard cuttings from the trash\n2.Create a compost site.\n3.Choose to make either a cold or hot compost heap\n4.Maintain your compost site.\n5.Use your compost when it\'s ready.'
-            })
 }
 
 function analysis_part(){
@@ -581,12 +476,79 @@ api.sendMessage({
 
 api.sendMessage({
         chat_id:message.chat.id,
-        text: 'Here are some tip to help you handle your waste\n\n Part1:Reducing Your Garbage\n1.Use cloth bags instead of plastic \n2.Buy food that has less packaging\n3.Do vermicomposting\n4.Don\'t use bottled drinks unless you have to.\n5.Reduce your paper usage.\n6.Consider making your own household cleaners and detergents\n\n Part2: Reusing and Recycling\n1.Donate items when possible\n2.Reuse containers\n3.Follow your city\'s recycling policies\n4.Dispose of trash and hazardous waste properly\n\nPart3:Composting\n1.Save your food scraps and yard cuttings from the trash\n2.Create a compost site.\n3.Choose to make either a cold or hot compost heap\n4.Maintain your compost site.\n5.Use your compost when it\'s ready.'
+        text: 'Don\'t worry we are here to help you handle your waste\n\n Part1:Reducing Your Garbage\n1.Use cloth bags instead of plastic \n2.Buy food that has less packaging\n3.Do vermicomposting\n4.Don\'t use bottled drinks unless you have to.\n5.Reduce your paper usage.\n6.Consider making your own household cleaners and detergents\n\n Part2: Reusing and Recycling\n1.Donate items when possible\n2.Reuse containers\n3.Follow your city\'s recycling policies\n4.Dispose of trash and hazardous waste properly\n\nPart3:Composting\n1.Save your food scraps and yard cuttings from the trash\n2.Create a compost site.\n3.Choose to make either a cold or hot compost heap\n4.Maintain your compost site.\n5.Use your compost when it\'s ready.'
             })
 
 }
 
+async function analysisfact(){
+const doc = new GoogleSpreadsheet('1bL83tJd2r99SbgUkFuoXJIsk45BlMgUFU9-r8Ng0ddY');
+await promisify (doc.useServiceAccountAuth)(creds);
+const info= await promisify(doc.getInfo)();
+const sheet = info.worksheets[0];
+console.log(`Title:${sheet.title},rows:${sheet.rowCount}`)
+const cells = await promisify(sheet.getCells)({
+'min-row':2,
+'max-row':11,
+'min-col':20,
+'max-col':20
 })
+var i=1;
+
+for (const cell of cells){console.log("***")
+a[i]=cell.value
+
+console.log(a[i]+'%')
+i=i+1;
+}
+
+printanaldata()
+}
+
+function printanaldata(){
+api.sendMessage({
+        chat_id:message.chat.id,
+        text: 'Do you have livestocks?\n yes :'+a[1]+'%',
+    })
+api.sendMessage({
+        chat_id:message.chat.id,
+        text: 'Q3:  Do you have biogas plant at your home?\n yes :'+a[2]+'%',
+    })
+api.sendMessage({
+        chat_id:message.chat.id,
+        text: 'Would you like to get a biogas connection(if you dont have)\n yes :'+a[3]+'%',
+    })
+api.sendMessage({
+        chat_id:message.chat.id,
+        text: ' Do you handle waste by using proper methods?\n yes :'+a[4]+'%',
+    })
+api.sendMessage({
+        chat_id:message.chat.id,
+        text: 'Do you dispose the biodegradable waste in pit made in your backyard?\n yes :'+a[5]+'%',
+    })
+api.sendMessage({
+        chat_id:message.chat.id,
+        text: 'Have you tried turning waste into manure and fertiliser?\n yes :'+a[6]+'%',
+    })
+api.sendMessage({
+        chat_id:message.chat.id,
+        text: 'Do you sort waste into three\n yes :'+a[7]+'%',
+    })
+    api.sendMessage({
+        chat_id:message.chat.id,
+        text: 'Do you burn plastic waste\n yes :'+a[8]+'%',
+    })
+      api.sendMessage({
+        chat_id:message.chat.id,
+        text: 'Do you give up the plastic waste for recycling after collecting?\n yes :'+a[9]+'%',
+    })
+        api.sendMessage({
+        chat_id:message.chat.id,
+        text: ' Did you know you could extract gold from eWaste?\n yes :'+a[10]+'%',
+    })
+}
 
 
 
+
+})
